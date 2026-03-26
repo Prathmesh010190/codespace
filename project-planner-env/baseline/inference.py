@@ -3,53 +3,49 @@ import requests
 
 BASE_URL = "http://localhost:8000"
 
-def get_hardcoded_plan(difficulty):
-    if difficulty == "easy":
-        return {
-            "action": {
-                "tasks": [
-                    {"name": "Design OAuth flow", "assignee": "Alice", "estimated_days": 2, "priority": "high", "depends_on": [], "skills_required": ["backend", "security"]},
-                    {"name": "Implement OAuth backend", "assignee": "Alice", "estimated_days": 3, "priority": "critical", "depends_on": ["Design OAuth flow"], "skills_required": ["backend"]},
-                    {"name": "Build email verification", "assignee": "Charlie", "estimated_days": 2, "priority": "high", "depends_on": [], "skills_required": ["backend"]},
-                    {"name": "Create password reset", "assignee": "Charlie", "estimated_days": 2, "priority": "medium", "depends_on": ["Build email verification"], "skills_required": ["backend"]},
-                    {"name": "Frontend integration", "assignee": "Bob", "estimated_days": 3, "priority": "high", "depends_on": ["Implement OAuth backend"], "skills_required": ["frontend"]},
-                    {"name": "Testing", "assignee": "Bob", "estimated_days": 2, "priority": "medium", "depends_on": ["Frontend integration"], "skills_required": ["testing"]}
-                ],
-                "risks": ["Junior developer may need support", "OAuth complexity", "Charlie limited availability"],
-                "sprint_summary": "Week 1: Backend services by Alice and Charlie. Week 2: Frontend integration and testing by Bob.",
-                "milestones": ["Backend Complete", "Frontend Complete", "Launch Ready"]
-            }
+def get_hardcoded_plan():
+    return {
+        "action": {
+            "tasks": [
+                {"name": "Design OAuth flow", "assignee": "Alice", "estimated_days": 2, "priority": 1, "depends_on": [], "category": "backend"},
+                {"name": "Implement OAuth backend", "assignee": "Alice", "estimated_days": 3, "priority": 1, "depends_on": ["Design OAuth flow"], "category": "backend"},
+                {"name": "Build email verification", "assignee": "Charlie", "estimated_days": 2, "priority": 2, "depends_on": [], "category": "backend"},
+                {"name": "Create password reset", "assignee": "Charlie", "estimated_days": 2, "priority": 3, "depends_on": ["Build email verification"], "category": "backend"},
+                {"name": "Frontend integration", "assignee": "Bob", "estimated_days": 3, "priority": 2, "depends_on": ["Implement OAuth backend"], "category": "frontend"},
+                {"name": "Testing", "assignee": "Bob", "estimated_days": 2, "priority": 3, "depends_on": ["Frontend integration"], "category": "testing"}
+            ],
+            "risks": ["Junior dev needs support", "OAuth complexity", "Charlie limited availability"],
+            "sprint_summary": "Week 1: Backend OAuth and email by Alice and Charlie. Week 2: Frontend integration and testing by Bob."
         }
-    return {"action": {"tasks": [], "risks": [], "sprint_summary": "", "milestones": []}}
+    }
 
 def run_baseline(difficulty="easy"):
-    print(f"\n🤖 Running baseline agent on {difficulty} difficulty...")
+    print(f"\n🤖 Running baseline on {difficulty}...")
     print("=" * 50)
 
     try:
-        obs_response = requests.post(f"{BASE_URL}/reset", json={"difficulty": difficulty})
-        obs = obs_response.json()
-        print(f"✅ Environment reset successfully!")
+        # Reset
+        obs = requests.post(f"{BASE_URL}/reset", json={"difficulty": difficulty}).json()
+        print("✅ Reset successful!")
+
+        # Submit plan
+        plan = get_hardcoded_plan()
+        step_result = requests.post(f"{BASE_URL}/step", json=plan).json()
+        print(f"📝 Step Response: {json.dumps(step_result, indent=2)}")
+
+        # Check state
+        state = requests.get(f"{BASE_URL}/state").json()
+        print(f"\n📌 State:")
+        print(f"   Episode: {state.get('episode_id', 'N/A')}")
+        print(f"   Step: {state.get('step_count', 'N/A')}/{state.get('max_steps', 'N/A')}")
+        print(f"   🏆 Reward: {state.get('current_reward', 'N/A')}")
+        print(f"   Done: {state.get('is_done', 'N/A')}")
+
     except Exception as e:
-        print(f"❌ Server not running? Error: {e}")
-        return
-
-    plan = get_hardcoded_plan(difficulty)
-    print(f"📝 Submitting plan...")
-
-    result = requests.post(f"{BASE_URL}/step", json=plan)
-    result_data = result.json()
-
-    print(f"\n🏆 Score: {result_data.get('score', 'N/A')}")
-    print(f"✅ Passed: {result_data.get('passed', 'N/A')}")
-    print(f"📊 Breakdown:")
-    for key, value in result_data.get('breakdown', {}).items():
-        print(f"   {key}: {value}")
-
-    return result_data
+        print(f"❌ Error: {e}")
 
 if __name__ == "__main__":
     print("🚀 ProjectPlannerEnv — Baseline Inference")
     print("=" * 50)
     run_baseline("easy")
-    print("\n✅ Baseline test complete!")
+    print("\n✅ Complete!")

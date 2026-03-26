@@ -1,0 +1,38 @@
+name: project_planner_env
+version: "1.0.0"
+description: >
+  An OpenEnv environment where AI agents act as Project Managers.
+  Agents receive project briefs and team info, then create sprint plans
+  that are graded on task coverage, skill matching, availability
+  compliance, dependency correctness, and risk identification.
+
+author: Prathmesh Pradip Kokate
+tags:
+  - openenv
+  - project-management
+  - planning
+  - real-world-task
+  - agent-evaluation
+
+interface:
+  reset: "POST /reset"
+  step: "POST /step"
+  state: "GET /state"
+
+tasks:
+  - name: "Task Breakdown"
+    type: "easy"
+    description: "Break project into individual tasks"
+  - name: "Plan and Assign"
+    type: "medium"
+    description: "Break down, assign team members, estimate effort"
+  - name: "Complete Sprint Plan"
+    type: "hard"
+    description: "Full plan with dependencies, risks, and summary"
+
+endpoints:
+  health: "GET /health"
+  tasks: "GET /tasks"
+  grader: "POST /grader"
+  baseline: "POST /baseline"
+  projects: "GET /projects"

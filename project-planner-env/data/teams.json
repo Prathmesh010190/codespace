@@ -1,0 +1,179 @@
+{
+    "team_alpha": {
+        "name": "Team Alpha",
+        "members": [
+            {
+                "name": "Alice",
+                "role": "Senior Backend Developer",
+                "skills": ["python", "django", "flask", "postgresql", "redis", "docker", "oauth", "rest-api", "unit-testing", "security"],
+                "experience_years": 7,
+                "availability_percent": 80,
+                "seniority": "senior"
+            },
+            {
+                "name": "Bob",
+                "role": "Junior Frontend Developer",
+                "skills": ["html", "css", "javascript", "react", "responsive-design", "ui-testing"],
+                "experience_years": 1,
+                "availability_percent": 100,
+                "seniority": "junior"
+            },
+            {
+                "name": "Charlie",
+                "role": "Mid-Level Fullstack Developer",
+                "skills": ["python", "javascript", "react", "django", "postgresql", "rest-api", "docker", "git"],
+                "experience_years": 3,
+                "availability_percent": 60,
+                "seniority": "mid"
+            }
+        ]
+    },
+    "team_beta": {
+        "name": "Team Beta",
+        "members": [
+            {
+                "name": "Diana",
+                "role": "Senior Frontend Developer",
+                "skills": ["javascript", "typescript", "react", "nextjs", "css", "html", "responsive-design", "accessibility", "ui-testing", "figma"],
+                "experience_years": 6,
+                "availability_percent": 70,
+                "seniority": "senior"
+            },
+            {
+                "name": "Ethan",
+                "role": "Mid-Level Backend Developer",
+                "skills": ["python", "fastapi", "postgresql", "redis", "docker", "rest-api", "unit-testing", "celery"],
+                "experience_years": 3,
+                "availability_percent": 100,
+                "seniority": "mid"
+            },
+            {
+                "name": "Fiona",
+                "role": "Junior QA Engineer",
+                "skills": ["manual-testing", "selenium", "test-planning", "bug-reporting", "ui-testing"],
+                "experience_years": 1,
+                "availability_percent": 100,
+                "seniority": "junior"
+            }
+        ]
+    },
+    "team_gamma": {
+        "name": "Team Gamma",
+        "members": [
+            {
+                "name": "George",
+                "role": "Senior Fullstack Developer",
+                "skills": ["python", "javascript", "typescript", "react", "django", "postgresql", "redis", "docker", "kubernetes", "rest-api", "websocket", "unit-testing"],
+                "experience_years": 8,
+                "availability_percent": 50,
+                "seniority": "senior"
+            },
+            {
+                "name": "Hannah",
+                "role": "Mid-Level Backend Developer",
+                "skills": ["python", "fastapi", "postgresql", "redis", "celery", "docker", "rest-api", "unit-testing", "email-integration"],
+                "experience_years": 4,
+                "availability_percent": 90,
+                "seniority": "mid"
+            },
+            {
+                "name": "Ivan",
+                "role": "Mid-Level Frontend Developer",
+                "skills": ["javascript", "typescript", "react", "nextjs", "css", "html", "responsive-design", "websocket", "ui-testing"],
+                "experience_years": 3,
+                "availability_percent": 100,
+                "seniority": "mid"
+            },
+            {
+                "name": "Julia",
+                "role": "Junior DevOps Engineer",
+                "skills": ["docker", "linux", "bash", "ci-cd", "monitoring", "nginx"],
+                "experience_years": 1,
+                "availability_percent": 100,
+                "seniority": "junior"
+            }
+        ]
+    },
+    "team_delta": {
+        "name": "Team Delta",
+        "members": [
+            {
+                "name": "Kevin",
+                "role": "Senior Backend Developer",
+                "skills": ["python", "golang", "postgresql", "redis", "docker", "kubernetes", "rest-api", "graphql", "microservices", "security", "rate-limiting"],
+                "experience_years": 9,
+                "availability_percent": 60,
+                "seniority": "senior"
+            },
+            {
+                "name": "Laura",
+                "role": "Senior Frontend Developer",
+                "skills": ["javascript", "typescript", "react", "nextjs", "d3js", "css", "html", "responsive-design", "accessibility", "data-visualization"],
+                "experience_years": 6,
+                "availability_percent": 80,
+                "seniority": "senior"
+            },
+            {
+                "name": "Mike",
+                "role": "Mid-Level Backend Developer",
+                "skills": ["python", "django", "postgresql", "redis", "docker", "rest-api", "celery", "unit-testing"],
+                "experience_years": 3,
+                "availability_percent": 100,
+                "seniority": "mid"
+            },
+            {
+                "name": "Nina",
+                "role": "Junior Frontend Developer",
+                "skills": ["html", "css", "javascript", "react", "responsive-design"],
+                "experience_years": 1,
+                "availability_percent": 100,
+                "seniority": "junior"
+            }
+        ]
+    },
+    "team_epsilon": {
+        "name": "Team Epsilon",
+        "members": [
+            {
+                "name": "Oscar",
+                "role": "Senior Architect",
+                "skills": ["python", "golang", "system-design", "postgresql", "redis", "docker", "kubernetes", "microservices", "security", "ci-cd", "websocket", "crdt"],
+                "experience_years": 12,
+                "availability_percent": 40,
+                "seniority": "senior"
+            },
+            {
+                "name": "Priya",
+                "role": "Senior Backend Developer",
+                "skills": ["python", "fastapi", "django", "postgresql", "redis", "docker", "rest-api", "websocket", "celery", "unit-testing", "integration-testing"],
+                "experience_years": 7,
+                "availability_percent": 80,
+                "seniority": "senior"
+            },
+            {
+                "name": "Quinn",
+                "role": "Mid-Level Frontend Developer",
+                "skills": ["javascript", "typescript", "react", "nextjs", "css", "html", "websocket", "rich-text-editor", "responsive-design"],
+                "experience_years": 4,
+                "availability_percent": 100,
+                "seniority": "mid"
+            },
+            {
+                "name": "Rachel",
+                "role": "Mid-Level DevOps Engineer",
+                "skills": ["docker", "kubernetes", "ci-cd", "terraform", "aws", "monitoring", "nginx", "linux", "bash", "security-scanning"],
+                "experience_years": 3,
+                "availability_percent": 70,
+                "seniority": "mid"
+            },
+            {
+                "name": "Sam",
+                "role": "Junior QA Engineer",
+                "skills": ["manual-testing", "selenium", "test-planning", "bug-reporting", "smoke-testing", "integration-testing"],
+                "experience_years": 1,
+                "availability_percent": 100,
+                "seniority": "junior"
+            }
+        ]
+    }
+}

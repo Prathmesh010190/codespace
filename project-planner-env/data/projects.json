@@ -1,0 +1,272 @@
+[
+    {
+        "id": "proj_001",
+        "name": "User Authentication System",
+        "difficulty": "easy",
+        "description": "Build a user authentication system for a web application. The system should allow users to sign up with email and password, log in, and log out. Passwords must be securely hashed. Include a 'forgot password' flow that sends a reset link via email. Add OAuth 2.0 login support for Google and GitHub. All endpoints should be RESTful and return proper HTTP status codes.",
+        "requirements": [
+            "User signup with email and password",
+            "User login and logout",
+            "Password hashing and security",
+            "Forgot password with email reset link",
+            "OAuth 2.0 login for Google",
+            "OAuth 2.0 login for GitHub",
+            "RESTful API endpoints",
+            "Input validation and error handling"
+        ],
+        "constraints": [
+            "Must use OAuth 2.0 standard",
+            "Passwords must be hashed using bcrypt",
+            "Must include unit tests for all auth endpoints",
+            "Backend API must be completed before frontend integration"
+        ],
+        "deadline_days": 12,
+        "team_config": "team_alpha"
+    },
+    {
+        "id": "proj_002",
+        "name": "E-Commerce Checkout Flow",
+        "difficulty": "easy",
+        "description": "Build a complete checkout flow for an online store. Users should be able to view their cart, enter shipping information, select a shipping method, enter payment details, review their order, and receive an order confirmation. The system must calculate taxes and shipping costs dynamically based on the user's location.",
+        "requirements": [
+            "Shopping cart display with item list and totals",
+            "Shipping address form with validation",
+            "Shipping method selection with cost calculation",
+            "Payment information form",
+            "Order review and confirmation page",
+            "Order confirmation email",
+            "Tax calculation based on location",
+            "Mobile-responsive design"
+        ],
+        "constraints": [
+            "Must support credit card and PayPal payments",
+            "Shipping cost API must be integrated before checkout UI",
+            "Must handle edge cases like empty cart and invalid addresses",
+            "All forms must have client-side and server-side validation"
+        ],
+        "deadline_days": 14,
+        "team_config": "team_beta"
+    },
+    {
+        "id": "proj_003",
+        "name": "Blog Platform with CMS",
+        "difficulty": "easy",
+        "description": "Create a blogging platform where authors can write, edit, and publish blog posts. The platform should have a simple content management system with a rich text editor. Readers should be able to browse posts, search by keywords, filter by categories, and leave comments. Include an admin dashboard showing basic analytics like page views and popular posts.",
+        "requirements": [
+            "Blog post creation with rich text editor",
+            "Blog post editing and deletion",
+            "Publish and draft status for posts",
+            "Category and tag system",
+            "Search functionality by keywords",
+            "Filter posts by category",
+            "Comment system for readers",
+            "Admin dashboard with basic analytics"
+        ],
+        "constraints": [
+            "Rich text editor must support images and code blocks",
+            "Database schema must be designed before API development",
+            "Search must work without external search engines",
+            "Must include basic spam protection for comments"
+        ],
+        "deadline_days": 15,
+        "team_config": "team_alpha"
+    },
+    {
+        "id": "proj_004",
+        "name": "Real-Time Notification System",
+        "difficulty": "medium",
+        "description": "Build a notification system that supports multiple channels: in-app notifications, email notifications, and push notifications for mobile. The system must handle notification preferences per user, allowing them to opt in or out of specific notification types. Include a notification center UI where users can view, mark as read, and dismiss notifications. The system must support scheduling notifications for future delivery and handle retry logic for failed deliveries.",
+        "requirements": [
+            "In-app notification delivery",
+            "Email notification delivery",
+            "Push notification delivery for mobile",
+            "User notification preferences management",
+            "Notification center UI with read/unread status",
+            "Mark as read and dismiss functionality",
+            "Scheduled notification delivery",
+            "Retry logic for failed deliveries",
+            "Notification templates system",
+            "Rate limiting to prevent notification spam"
+        ],
+        "constraints": [
+            "Must use WebSocket for real-time in-app notifications",
+            "Email service must be abstracted for provider switching",
+            "Push notifications require device token management",
+            "Backend notification service must be built before any channel integration",
+            "Must handle at least 1000 notifications per minute"
+        ],
+        "deadline_days": 15,
+        "team_config": "team_gamma"
+    },
+    {
+        "id": "proj_005",
+        "name": "File Management System",
+        "difficulty": "medium",
+        "description": "Build a cloud file management system similar to a simplified Google Drive. Users should be able to upload files, organize them in folders, share files with other users with different permission levels (view, edit, admin), and generate shareable links. Include file preview for common formats (images, PDFs, text files). The system must handle file versioning so users can see previous versions and restore them.",
+        "requirements": [
+            "File upload with drag-and-drop support",
+            "Folder creation and organization",
+            "File sharing with permission levels (view, edit, admin)",
+            "Shareable link generation with optional expiry",
+            "File preview for images, PDFs, and text files",
+            "File versioning with version history",
+            "Restore previous file versions",
+            "Storage quota management per user",
+            "File search by name and type",
+            "Bulk operations (move, delete, download multiple files)"
+        ],
+        "constraints": [
+            "Files must be stored in cloud storage (S3 compatible)",
+            "File upload service must be completed before UI work",
+            "Must handle files up to 100MB",
+            "Permission system must be role-based",
+            "Must include virus scanning for uploaded files"
+        ],
+        "deadline_days": 18,
+        "team_config": "team_gamma"
+    },
+    {
+        "id": "proj_006",
+        "name": "API Rate Limiter and Gateway",
+        "difficulty": "medium",
+        "description": "Build an API gateway with intelligent rate limiting for a microservices architecture. The gateway should route requests to appropriate backend services, enforce rate limits per API key and per endpoint, cache frequent responses, and provide a dashboard showing API usage analytics. Include support for different rate limit tiers (free, basic, premium) and automatic throttling with informative error responses when limits are exceeded.",
+        "requirements": [
+            "Request routing to backend services",
+            "Rate limiting per API key",
+            "Rate limiting per endpoint",
+            "Multiple rate limit tiers (free, basic, premium)",
+            "Response caching for frequent requests",
+            "API usage analytics dashboard",
+            "Automatic throttling with 429 responses",
+            "API key management (create, revoke, rotate)",
+            "Request and response logging",
+            "Health check monitoring for backend services"
+        ],
+        "constraints": [
+            "Must use Redis for rate limit counters and caching",
+            "Rate limit logic must be implemented before routing",
+            "Must handle at least 10000 requests per second",
+            "Gateway must add less than 5ms latency",
+            "Must support both REST and GraphQL backends"
+        ],
+        "deadline_days": 16,
+        "team_config": "team_delta"
+    },
+    {
+        "id": "proj_007",
+        "name": "Multi-Tenant SaaS Dashboard",
+        "difficulty": "hard",
+        "description": "Build a multi-tenant SaaS analytics dashboard where each tenant (company) has isolated data, custom branding, and role-based access control. The dashboard should display real-time metrics, historical charts, and exportable reports. Include a tenant onboarding flow, subscription management with different plan tiers, and an admin super-panel for managing all tenants. The system must handle tenant data isolation at the database level and support white-labeling with custom domains.",
+        "requirements": [
+            "Multi-tenant data isolation at database level",
+            "Tenant onboarding and setup flow",
+            "Custom branding per tenant (logo, colors, domain)",
+            "Role-based access control (admin, manager, viewer)",
+            "Real-time metrics dashboard with live updates",
+            "Historical data charts and trends",
+            "Exportable reports (PDF and CSV)",
+            "Subscription management with plan tiers",
+            "Billing integration with invoice generation",
+            "Super admin panel for tenant management",
+            "Custom domain support with SSL",
+            "Audit logging for compliance"
+        ],
+        "constraints": [
+            "Must use row-level security or schema-per-tenant for data isolation",
+            "Database architecture must be finalized before any feature development",
+            "Must support at least 100 concurrent tenants",
+            "White-label features require DNS and SSL automation",
+            "Real-time features must use WebSocket connections",
+            "Must comply with SOC 2 data handling requirements"
+        ],
+        "deadline_days": 20,
+        "team_config": "team_delta"
+    },
+    {
+        "id": "proj_008",
+        "name": "CI/CD Pipeline with Automated Testing",
+        "difficulty": "hard",
+        "description": "Design and implement a complete CI/CD pipeline for a microservices application with 5 services. The pipeline must include automated unit testing, integration testing, security scanning, Docker image building, staging deployment, automated smoke tests on staging, and production deployment with blue-green strategy. Include rollback capabilities, deployment notifications, and a pipeline dashboard showing build status and deployment history for all services.",
+        "requirements": [
+            "Automated unit test execution for all 5 services",
+            "Integration test suite between services",
+            "Security vulnerability scanning (SAST and dependency scan)",
+            "Docker image building and registry push",
+            "Staging environment deployment",
+            "Automated smoke tests on staging",
+            "Production deployment with blue-green strategy",
+            "Automatic rollback on failure",
+            "Deployment notifications (Slack and email)",
+            "Pipeline dashboard with build history",
+            "Environment variable and secrets management",
+            "Parallel pipeline execution for independent services"
+        ],
+        "constraints": [
+            "All services must pass tests before any deployment",
+            "Security scan must run before Docker build",
+            "Staging must be validated before production deployment",
+            "Blue-green deployment requires load balancer configuration",
+            "Must support both scheduled and triggered deployments",
+            "Pipeline must complete within 15 minutes for fast feedback",
+            "Must handle deployment dependencies between services"
+        ],
+        "deadline_days": 22,
+        "team_config": "team_epsilon"
+    },
+    {
+        "id": "proj_009",
+        "name": "Real-Time Collaborative Document Editor",
+        "difficulty": "hard",
+        "description": "Build a real-time collaborative document editor where multiple users can edit the same document simultaneously, similar to Google Docs. The system must handle concurrent edits using operational transformation or CRDTs, show real-time cursors and selections of other users, support rich text formatting, document versioning with diff view, comments and suggestions, and export to multiple formats. Include user presence indicators and a document sharing system with granular permissions.",
+        "requirements": [
+            "Real-time collaborative editing with conflict resolution",
+            "Concurrent edit handling using OT or CRDTs",
+            "Real-time cursor and selection display for all users",
+            "Rich text formatting (bold, italic, headings, lists, links)",
+            "Document version history with diff view",
+            "Comments and suggestion mode",
+            "Export to PDF, DOCX, and Markdown",
+            "Document sharing with granular permissions",
+            "User presence indicators (who is viewing/editing)",
+            "Offline editing with sync on reconnect",
+            "Document templates",
+            "Image and table embedding"
+        ],
+        "constraints": [
+            "Must implement OT or CRDT algorithm for conflict resolution",
+            "Conflict resolution engine must be built before editor UI",
+            "Must handle at least 20 simultaneous editors per document",
+            "Real-time sync latency must be under 100ms",
+            "Must support documents up to 50 pages",
+            "Offline mode requires local storage strategy",
+            "Export functionality depends on document model being finalized"
+        ],
+        "deadline_days": 25,
+        "team_config": "team_epsilon"
+    },
+    {
+        "id": "proj_010",
+        "name": "Employee Onboarding Portal",
+        "difficulty": "easy",
+        "description": "Build an employee onboarding portal where HR can create onboarding checklists for new hires. New employees should see their personalized checklist including document uploads, training video completions, policy acknowledgments, and IT setup requests. Include progress tracking for both the new hire and their manager, email reminders for incomplete tasks, and a simple reporting dashboard for HR to monitor onboarding completion rates.",
+        "requirements": [
+            "HR admin panel to create onboarding checklists",
+            "Personalized checklist view for new employees",
+            "Document upload for required paperwork",
+            "Training video tracking with completion status",
+            "Policy acknowledgment with digital signature",
+            "IT setup request form",
+            "Progress tracking for employee and manager",
+            "Email reminders for incomplete tasks",
+            "HR reporting dashboard for completion rates"
+        ],
+        "constraints": [
+            "Document upload must support PDF and images only",
+            "Checklist template system must be built before employee portal",
+            "Must send reminder emails 3 days before deadline",
+            "Must comply with basic data privacy requirements"
+        ],
+        "deadline_days": 14,
+        "team_config": "team_beta"
+    }
+]

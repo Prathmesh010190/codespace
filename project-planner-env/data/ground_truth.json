@@ -1,0 +1,912 @@
+{
+    "proj_001": {
+        "required_tasks": [
+            {
+                "keyword": "signup",
+                "description": "User signup/registration",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "django", "rest-api"]
+            },
+            {
+                "keyword": "login",
+                "description": "User login and session management",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "django", "rest-api", "security"]
+            },
+            {
+                "keyword": "password",
+                "description": "Password hashing and reset flow",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "security", "email-integration"]
+            },
+            {
+                "keyword": "oauth",
+                "description": "OAuth 2.0 integration for Google and GitHub",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "oauth", "rest-api"]
+            },
+            {
+                "keyword": "frontend",
+                "description": "Login/signup frontend UI",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["html", "css", "javascript", "react"]
+            },
+            {
+                "keyword": "test",
+                "description": "Unit tests for auth endpoints",
+                "category": "testing",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["unit-testing", "python"]
+            },
+            {
+                "keyword": "validation",
+                "description": "Input validation and error handling",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "rest-api"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "frontend", "depends_on": "oauth"},
+            {"task": "frontend", "depends_on": "login"},
+            {"task": "test", "depends_on": "login"},
+            {"task": "test", "depends_on": "oauth"},
+            {"task": "oauth", "depends_on": "signup"}
+        ],
+        "known_risks": [
+            "OAuth provider API changes",
+            "Junior developer may need extra time",
+            "Email delivery reliability",
+            "Security vulnerabilities in auth flow"
+        ]
+    },
+    "proj_002": {
+        "required_tasks": [
+            {
+                "keyword": "cart",
+                "description": "Shopping cart display",
+                "category": "frontend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["javascript", "react", "html", "css"]
+            },
+            {
+                "keyword": "shipping",
+                "description": "Shipping address and method",
+                "category": "fullstack",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "rest-api", "javascript"]
+            },
+            {
+                "keyword": "payment",
+                "description": "Payment processing integration",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "rest-api", "security"]
+            },
+            {
+                "keyword": "order",
+                "description": "Order confirmation and email",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "email-integration"]
+            },
+            {
+                "keyword": "tax",
+                "description": "Tax calculation logic",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "rest-api"]
+            },
+            {
+                "keyword": "validation",
+                "description": "Form validation (client and server)",
+                "category": "fullstack",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["javascript", "python"]
+            },
+            {
+                "keyword": "responsive",
+                "description": "Mobile-responsive design",
+                "category": "frontend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["css", "html", "responsive-design"]
+            },
+            {
+                "keyword": "test",
+                "description": "Testing checkout flow",
+                "category": "testing",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["manual-testing", "ui-testing"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "payment", "depends_on": "cart"},
+            {"task": "order", "depends_on": "payment"},
+            {"task": "shipping", "depends_on": "cart"},
+            {"task": "tax", "depends_on": "shipping"},
+            {"task": "test", "depends_on": "payment"}
+        ],
+        "known_risks": [
+            "Payment gateway integration complexity",
+            "Tax calculation varies by region",
+            "Mobile responsiveness across devices",
+            "Edge cases in checkout flow"
+        ]
+    },
+    "proj_003": {
+        "required_tasks": [
+            {
+                "keyword": "editor",
+                "description": "Rich text editor for posts",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["javascript", "react", "rich-text-editor"]
+            },
+            {
+                "keyword": "crud",
+                "description": "Blog post CRUD operations",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["python", "django", "rest-api", "postgresql"]
+            },
+            {
+                "keyword": "category",
+                "description": "Category and tag system",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "postgresql"]
+            },
+            {
+                "keyword": "search",
+                "description": "Search functionality",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "postgresql"]
+            },
+            {
+                "keyword": "comment",
+                "description": "Comment system",
+                "category": "fullstack",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "javascript", "rest-api"]
+            },
+            {
+                "keyword": "dashboard",
+                "description": "Admin analytics dashboard",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["javascript", "react", "data-visualization"]
+            },
+            {
+                "keyword": "database",
+                "description": "Database schema design",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["postgresql", "python"]
+            },
+            {
+                "keyword": "spam",
+                "description": "Comment spam protection",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "security"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "crud", "depends_on": "database"},
+            {"task": "editor", "depends_on": "crud"},
+            {"task": "search", "depends_on": "crud"},
+            {"task": "comment", "depends_on": "crud"},
+            {"task": "dashboard", "depends_on": "crud"},
+            {"task": "spam", "depends_on": "comment"}
+        ],
+        "known_risks": [
+            "Rich text editor complexity",
+            "Search performance on large datasets",
+            "Comment spam attacks",
+            "Image upload and storage"
+        ]
+    },
+    "proj_004": {
+        "required_tasks": [
+            {
+                "keyword": "in-app",
+                "description": "In-app notification delivery",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "websocket", "redis"]
+            },
+            {
+                "keyword": "email",
+                "description": "Email notification service",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["python", "email-integration", "celery"]
+            },
+            {
+                "keyword": "push",
+                "description": "Push notification service",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "rest-api"]
+            },
+            {
+                "keyword": "preference",
+                "description": "User notification preferences",
+                "category": "fullstack",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "javascript", "rest-api"]
+            },
+            {
+                "keyword": "center",
+                "description": "Notification center UI",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["javascript", "react", "websocket", "css"]
+            },
+            {
+                "keyword": "schedule",
+                "description": "Scheduled notification delivery",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "celery", "redis"]
+            },
+            {
+                "keyword": "retry",
+                "description": "Retry logic for failed deliveries",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "celery"]
+            },
+            {
+                "keyword": "template",
+                "description": "Notification templates system",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python"]
+            },
+            {
+                "keyword": "rate-limit",
+                "description": "Rate limiting for notifications",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "redis", "rate-limiting"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "email", "depends_on": "template"},
+            {"task": "push", "depends_on": "template"},
+            {"task": "center", "depends_on": "in-app"},
+            {"task": "schedule", "depends_on": "in-app"},
+            {"task": "retry", "depends_on": "email"},
+            {"task": "rate-limit", "depends_on": "in-app"}
+        ],
+        "known_risks": [
+            "WebSocket connection stability",
+            "Push notification provider rate limits",
+            "Email deliverability issues",
+            "Notification overload for users",
+            "Complex state management for read/unread"
+        ]
+    },
+    "proj_005": {
+        "required_tasks": [
+            {
+                "keyword": "upload",
+                "description": "File upload system",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "rest-api", "docker"]
+            },
+            {
+                "keyword": "folder",
+                "description": "Folder organization",
+                "category": "fullstack",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["python", "javascript", "postgresql"]
+            },
+            {
+                "keyword": "sharing",
+                "description": "File sharing with permissions",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "rest-api", "security"]
+            },
+            {
+                "keyword": "preview",
+                "description": "File preview for common formats",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["javascript", "react"]
+            },
+            {
+                "keyword": "version",
+                "description": "File versioning system",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "postgresql"]
+            },
+            {
+                "keyword": "search",
+                "description": "File search functionality",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "postgresql"]
+            },
+            {
+                "keyword": "quota",
+                "description": "Storage quota management",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "redis"]
+            },
+            {
+                "keyword": "bulk",
+                "description": "Bulk file operations",
+                "category": "fullstack",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "javascript"]
+            },
+            {
+                "keyword": "virus",
+                "description": "Virus scanning for uploads",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "security", "docker"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "folder", "depends_on": "upload"},
+            {"task": "sharing", "depends_on": "upload"},
+            {"task": "preview", "depends_on": "upload"},
+            {"task": "version", "depends_on": "upload"},
+            {"task": "search", "depends_on": "folder"},
+            {"task": "virus", "depends_on": "upload"},
+            {"task": "bulk", "depends_on": "folder"}
+        ],
+        "known_risks": [
+            "Large file upload handling",
+            "Cloud storage cost management",
+            "File type security vulnerabilities",
+            "Version storage space consumption",
+            "Permission inheritance in nested folders"
+        ]
+    },
+    "proj_006": {
+        "required_tasks": [
+            {
+                "keyword": "routing",
+                "description": "Request routing to services",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "golang", "rest-api", "microservices"]
+            },
+            {
+                "keyword": "rate-limit",
+                "description": "Rate limiting per key and endpoint",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "redis", "rate-limiting"]
+            },
+            {
+                "keyword": "cache",
+                "description": "Response caching",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "redis"]
+            },
+            {
+                "keyword": "dashboard",
+                "description": "API usage analytics dashboard",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["javascript", "react", "data-visualization"]
+            },
+            {
+                "keyword": "api-key",
+                "description": "API key management",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "security", "rest-api"]
+            },
+            {
+                "keyword": "tier",
+                "description": "Rate limit tiers (free/basic/premium)",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "redis"]
+            },
+            {
+                "keyword": "logging",
+                "description": "Request and response logging",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "monitoring"]
+            },
+            {
+                "keyword": "health",
+                "description": "Health check monitoring",
+                "category": "devops",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "docker", "monitoring"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "rate-limit", "depends_on": "routing"},
+            {"task": "cache", "depends_on": "routing"},
+            {"task": "tier", "depends_on": "rate-limit"},
+            {"task": "dashboard", "depends_on": "logging"},
+            {"task": "api-key", "depends_on": "rate-limit"}
+        ],
+        "known_risks": [
+            "Performance under high load",
+            "Redis single point of failure",
+            "Rate limit accuracy at scale",
+            "Gateway latency overhead",
+            "GraphQL support complexity"
+        ]
+    },
+    "proj_007": {
+        "required_tasks": [
+            {
+                "keyword": "tenant-isolation",
+                "description": "Multi-tenant data isolation",
+                "category": "backend",
+                "min_days": 3,
+                "max_days": 5,
+                "required_skills": ["python", "postgresql", "security"]
+            },
+            {
+                "keyword": "onboarding",
+                "description": "Tenant onboarding flow",
+                "category": "fullstack",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "javascript", "react"]
+            },
+            {
+                "keyword": "branding",
+                "description": "Custom branding per tenant",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["javascript", "react", "css"]
+            },
+            {
+                "keyword": "rbac",
+                "description": "Role-based access control",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "security", "rest-api"]
+            },
+            {
+                "keyword": "metrics",
+                "description": "Real-time metrics dashboard",
+                "category": "frontend",
+                "min_days": 3,
+                "max_days": 5,
+                "required_skills": ["javascript", "react", "d3js", "websocket", "data-visualization"]
+            },
+            {
+                "keyword": "reports",
+                "description": "Exportable reports",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["python", "rest-api"]
+            },
+            {
+                "keyword": "subscription",
+                "description": "Subscription and billing",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "rest-api", "security"]
+            },
+            {
+                "keyword": "super-admin",
+                "description": "Super admin panel",
+                "category": "fullstack",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["python", "javascript", "react"]
+            },
+            {
+                "keyword": "custom-domain",
+                "description": "Custom domain with SSL",
+                "category": "devops",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["docker", "nginx", "kubernetes"]
+            },
+            {
+                "keyword": "audit-log",
+                "description": "Audit logging for compliance",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "postgresql", "security"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "onboarding", "depends_on": "tenant-isolation"},
+            {"task": "branding", "depends_on": "onboarding"},
+            {"task": "rbac", "depends_on": "tenant-isolation"},
+            {"task": "metrics", "depends_on": "tenant-isolation"},
+            {"task": "reports", "depends_on": "metrics"},
+            {"task": "subscription", "depends_on": "onboarding"},
+            {"task": "super-admin", "depends_on": "tenant-isolation"},
+            {"task": "custom-domain", "depends_on": "onboarding"},
+            {"task": "audit-log", "depends_on": "rbac"}
+        ],
+        "known_risks": [
+            "Data leakage between tenants",
+            "Performance degradation with many tenants",
+            "Custom domain SSL certificate management",
+            "Complex RBAC edge cases",
+            "Billing integration complexity",
+            "Database migration challenges"
+        ]
+    },
+    "proj_008": {
+        "required_tasks": [
+            {
+                "keyword": "unit-test",
+                "description": "Automated unit test execution",
+                "category": "devops",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["ci-cd", "unit-testing", "docker"]
+            },
+            {
+                "keyword": "integration-test",
+                "description": "Integration test suite",
+                "category": "devops",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["ci-cd", "integration-testing", "docker"]
+            },
+            {
+                "keyword": "security-scan",
+                "description": "Security vulnerability scanning",
+                "category": "devops",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["security-scanning", "ci-cd"]
+            },
+            {
+                "keyword": "docker-build",
+                "description": "Docker image building and push",
+                "category": "devops",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["docker", "ci-cd"]
+            },
+            {
+                "keyword": "staging",
+                "description": "Staging deployment",
+                "category": "devops",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["docker", "kubernetes", "ci-cd"]
+            },
+            {
+                "keyword": "smoke-test",
+                "description": "Automated smoke tests on staging",
+                "category": "devops",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["smoke-testing", "ci-cd"]
+            },
+            {
+                "keyword": "blue-green",
+                "description": "Blue-green production deployment",
+                "category": "devops",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["kubernetes", "docker", "nginx", "ci-cd"]
+            },
+            {
+                "keyword": "rollback",
+                "description": "Automatic rollback on failure",
+                "category": "devops",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["kubernetes", "ci-cd"]
+            },
+            {
+                "keyword": "notification",
+                "description": "Deployment notifications",
+                "category": "devops",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["ci-cd", "bash"]
+            },
+            {
+                "keyword": "dashboard",
+                "description": "Pipeline dashboard",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["javascript", "react", "data-visualization"]
+            },
+            {
+                "keyword": "secrets",
+                "description": "Secrets management",
+                "category": "devops",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["security", "docker", "kubernetes"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "integration-test", "depends_on": "unit-test"},
+            {"task": "security-scan", "depends_on": "unit-test"},
+            {"task": "docker-build", "depends_on": "security-scan"},
+            {"task": "staging", "depends_on": "docker-build"},
+            {"task": "smoke-test", "depends_on": "staging"},
+            {"task": "blue-green", "depends_on": "smoke-test"},
+            {"task": "rollback", "depends_on": "blue-green"},
+            {"task": "notification", "depends_on": "blue-green"},
+            {"task": "dashboard", "depends_on": "notification"}
+        ],
+        "known_risks": [
+            "Pipeline execution time exceeding 15 minutes",
+            "Service dependency ordering during deployment",
+            "Blue-green switchover data consistency",
+            "Secrets rotation during deployment",
+            "Parallel pipeline race conditions",
+            "Staging environment parity with production"
+        ]
+    },
+    "proj_009": {
+        "required_tasks": [
+            {
+                "keyword": "crdt",
+                "description": "Conflict resolution engine (OT/CRDT)",
+                "category": "backend",
+                "min_days": 4,
+                "max_days": 7,
+                "required_skills": ["python", "crdt", "system-design"]
+            },
+            {
+                "keyword": "realtime-sync",
+                "description": "Real-time sync via WebSocket",
+                "category": "backend",
+                "min_days": 3,
+                "max_days": 5,
+                "required_skills": ["python", "websocket", "redis"]
+            },
+            {
+                "keyword": "cursor",
+                "description": "Real-time cursor and selection display",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["javascript", "react", "websocket"]
+            },
+            {
+                "keyword": "rich-text",
+                "description": "Rich text formatting",
+                "category": "frontend",
+                "min_days": 3,
+                "max_days": 5,
+                "required_skills": ["javascript", "react", "rich-text-editor"]
+            },
+            {
+                "keyword": "version",
+                "description": "Document version history with diff",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "postgresql"]
+            },
+            {
+                "keyword": "comment",
+                "description": "Comments and suggestions",
+                "category": "fullstack",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["python", "javascript", "rest-api"]
+            },
+            {
+                "keyword": "export",
+                "description": "Export to PDF, DOCX, Markdown",
+                "category": "backend",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python"]
+            },
+            {
+                "keyword": "sharing",
+                "description": "Document sharing with permissions",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "security", "rest-api"]
+            },
+            {
+                "keyword": "presence",
+                "description": "User presence indicators",
+                "category": "frontend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["javascript", "websocket"]
+            },
+            {
+                "keyword": "offline",
+                "description": "Offline editing with sync",
+                "category": "frontend",
+                "min_days": 3,
+                "max_days": 5,
+                "required_skills": ["javascript", "react"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "realtime-sync", "depends_on": "crdt"},
+            {"task": "cursor", "depends_on": "realtime-sync"},
+            {"task": "rich-text", "depends_on": "crdt"},
+            {"task": "presence", "depends_on": "realtime-sync"},
+            {"task": "version", "depends_on": "crdt"},
+            {"task": "comment", "depends_on": "rich-text"},
+            {"task": "export", "depends_on": "rich-text"},
+            {"task": "sharing", "depends_on": "crdt"},
+            {"task": "offline", "depends_on": "realtime-sync"}
+        ],
+        "known_risks": [
+            "CRDT algorithm complexity and correctness",
+            "Real-time sync performance with 20+ users",
+            "Rich text editor compatibility across browsers",
+            "Offline conflict resolution edge cases",
+            "Document model complexity for export",
+            "WebSocket connection reliability"
+        ]
+    },
+    "proj_010": {
+        "required_tasks": [
+            {
+                "keyword": "admin",
+                "description": "HR admin panel for checklists",
+                "category": "fullstack",
+                "min_days": 2,
+                "max_days": 4,
+                "required_skills": ["python", "javascript", "react"]
+            },
+            {
+                "keyword": "checklist",
+                "description": "Personalized checklist view",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["javascript", "react", "css"]
+            },
+            {
+                "keyword": "document",
+                "description": "Document upload system",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["python", "rest-api"]
+            },
+            {
+                "keyword": "training",
+                "description": "Training video tracking",
+                "category": "fullstack",
+                "min_days": 1,
+                "max_days": 3,
+                "required_skills": ["javascript", "python"]
+            },
+            {
+                "keyword": "signature",
+                "description": "Policy acknowledgment with signature",
+                "category": "frontend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["javascript", "react"]
+            },
+            {
+                "keyword": "it-setup",
+                "description": "IT setup request form",
+                "category": "frontend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["javascript", "react", "html"]
+            },
+            {
+                "keyword": "progress",
+                "description": "Progress tracking",
+                "category": "fullstack",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "javascript"]
+            },
+            {
+                "keyword": "reminder",
+                "description": "Email reminder system",
+                "category": "backend",
+                "min_days": 1,
+                "max_days": 2,
+                "required_skills": ["python", "celery", "email-integration"]
+            },
+            {
+                "keyword": "dashboard",
+                "description": "HR reporting dashboard",
+                "category": "frontend",
+                "min_days": 2,
+                "max_days": 3,
+                "required_skills": ["javascript", "react", "data-visualization"]
+            }
+        ],
+        "known_dependencies": [
+            {"task": "checklist", "depends_on": "admin"},
+            {"task": "document", "depends_on": "checklist"},
+            {"task": "training", "depends_on": "checklist"},
+            {"task": "signature", "depends_on": "checklist"},
+            {"task": "it-setup", "depends_on": "checklist"},
+            {"task": "progress", "depends_on": "checklist"},
+            {"task": "reminder", "depends_on": "progress"},
+            {"task": "dashboard", "depends_on": "progress"}
+        ],
+        "known_risks": [
+            "Document format compatibility issues",
+            "Email delivery to new employee addresses",
+            "Data privacy compliance for personal documents",
+            "Video hosting and streaming performance"
+        ]
+    }
+}

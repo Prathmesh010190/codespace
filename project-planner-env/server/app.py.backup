@@ -244,57 +244,42 @@ async def run_grader(request: GraderRequest):
 
 @app.post("/baseline")
 async def run_baseline():
-    """Run baseline inference using hardcoded plans on all 3 difficulties."""
-    global env
-    if env is None:
-        raise HTTPException(status_code=500, detail="Environment not initialized")
+    """
+    Run baseline inference using OpenAI API.
+    Triggers the baseline script and returns scores for all 3 tasks.
     
-    import sys as _sys
-    import os as _os
-    _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
-    from baseline.inference import get_plan_for_difficulty
-    from models import PlannerAction, TaskItem
+    Requires OPENAI_API_KEY environment variable.
     
-    results = {}
-    for difficulty in ["easy", "medium", "hard"]:
-        try:
-            env.reset(task_type=difficulty)
-            plan_data = get_plan_for_difficulty(difficulty)
-            action = plan_data.get("action", plan_data)
-            task_items = []
-            for t in action["tasks"]:
-                task_items.append(TaskItem(
-                    name=t["name"],
-                    assignee=t.get("assignee", "Alice"),
-                    estimated_days=t.get("estimated_days", 2),
-                    priority=t.get("priority", 2),
-                    depends_on=t.get("depends_on", []),
-                    category=t.get("category", "backend")
-                ))
-            planner_action = PlannerAction(
-                tasks=task_items,
-                risks=action.get("risks", ["Unknown risk"]),
-                sprint_summary=action.get("sprint_summary", "Sprint plan")
-            )
-            step_result = env.step(planner_action)
-            if hasattr(step_result, "score"):
-                score = float(step_result.score)
-            elif hasattr(step_result, "reward"):
-                score = float(step_result.reward)
-            elif isinstance(step_result, dict):
-                score = float(step_result.get("reward", step_result.get("score", 0.0)))
-            else:
-                score = 0.0
-            results[difficulty] = {"score": round(score, 4), "difficulty": difficulty}
-        except Exception as e:
-            results[difficulty] = {"score": 0.0, "difficulty": difficulty, "error": str(e)}
-    
-    avg_score = sum(r.get("score", 0.0) for r in results.values()) / 3
-    return {
-        "status": "completed",
-        "baseline_scores": results,
-        "average_score": round(avg_score, 4)
-    }
+    Returns:
+        Baseline scores for easy, medium, and hard tasks.
+    """
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise HTTPException(
+            status_code=400,
+            detail="OPENAI_API_KEY environment variable not set. "
+                   "Set it in Space Settings → Variables."
+        )
+
+    try:
+        # Import and run baseline
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from baseline.inference import run_baseline_all_tasks
+
+        results = run_baseline_all_tasks(env, api_key)
+        return {
+            "status": "completed",
+            "scores": results,
+        }
+    except ImportError:
+        # If baseline module not available, return manual instructions
+        return {
+            "status": "manual",
+            "message": "Run baseline/inference.py separately with OPENAI_API_KEY set.",
+            "command": "OPENAI_API_KEY=your_key python baseline/inference.py",
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Baseline failed: {str(e)}")
 
 
 @app.get("/projects")
@@ -306,8 +291,28 @@ async def list_projects():
 
     return {"projects": env.get_project_list()}
 
+
+# ══════════════════════════════════════════════════════
+#  MAIN (for local development)
+# ══════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    host = os.environ.get("HOST", "0.0.0.0")
+    workers = int(os.environ.get("WORKERS", 1))
+
+    print(f"🚀 Starting server on {host}:{port}")
+    uvicorn.run(
+        "server.app:app",
+        host=host,
+        port=port,
+        workers=workers,
+        reload=True,
+    )
+
 # ============================================================
-#  GET /tasks — Available tasks and action schema
+# ENDPOINT: GET /tasks — Returns available tasks and action schema
 # ============================================================
 @app.get("/tasks")
 async def get_tasks():
@@ -323,7 +328,7 @@ async def get_tasks():
                 "deadline_days": 14
             },
             {
-                "task_id": "medium",
+                "task_id": "medium", 
                 "name": "E-Commerce MVP Planning",
                 "description": "Plan an e-commerce platform with 4 team members",
                 "difficulty": "medium",
@@ -332,7 +337,7 @@ async def get_tasks():
             },
             {
                 "task_id": "hard",
-                "name": "Real-Time SaaS Platform Planning",
+                "name": "Real-Time SaaS Platform Planning", 
                 "description": "Plan a collaborative project management SaaS with 6 team members",
                 "difficulty": "hard",
                 "team_size": 6,
@@ -360,7 +365,7 @@ async def get_tasks():
 
 
 # ============================================================
-#  GET /grader — Returns last grader score
+# ENDPOINT: GET /grader — Returns last grader score
 # ============================================================
 @app.get("/grader")
 async def get_grader():
@@ -368,13 +373,11 @@ async def get_grader():
     global env
     if env is None:
         raise HTTPException(status_code=500, detail="Environment not initialized")
-
+    
+    # Check if environment has a last grader result
     if hasattr(env, 'last_grader_result') and env.last_grader_result is not None:
-        result = env.last_grader_result
-        if hasattr(result, 'dict'):
-            return result.dict()
-        return result
-
+        return env.last_grader_result
+    
     return {
         "error": "No completed episode yet. Call POST /reset then POST /step first.",
         "score": None,
@@ -384,22 +387,26 @@ async def get_grader():
 
 
 # ============================================================
-#  POST /baseline — Run inference on all 3 difficulties
+# ENDPOINT: POST /baseline — Run inference on all 3 difficulties
 # ============================================================
-# ================================================================
-#  MAIN (for local development)
-# ================================================================
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    host = os.environ.get("HOST", "0.0.0.0")
-    workers = int(os.environ.get("WORKERS", 1))
+@app.post("/baseline")
+async def run_baseline():
+    """Run baseline inference on all 3 task difficulties and return scores."""
+    global env
+    if env is None:
+        raise HTTPException(status_code=500, detail="Environment not initialized")
+    
+    from baseline.inference import run_all_baselines
+    
+    try:
+        results = run_all_baselines()
+        return {
+            "baseline_scores": results,
+            "average_score": round(
+                sum(r["score"] for r in results.values()) / len(results), 4
+            ),
+            "status": "completed"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Baseline failed: {str(e)}")
 
-    print(f"🚀 Starting server on {host}:{port}")
-    uvicorn.run(
-        "server.app:app",
-        host=host,
-        port=port,
-        workers=workers,
-        reload=True,
-    )

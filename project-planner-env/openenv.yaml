@@ -1,38 +1,80 @@
-name: project_planner_env
-version: "1.0.0"
+name: ProjectPlannerEnv
 description: >
-  An OpenEnv environment where AI agents act as Project Managers.
-  Agents receive project briefs and team info, then create sprint plans
-  that are graded on task coverage, skill matching, availability
-  compliance, dependency correctness, and risk identification.
+  AI Project Manager environment where an agent reads project briefs,
+  breaks them into tasks, assigns team members, estimates effort,
+  identifies risks, and creates sprint plans. Simulates real-world
+  project planning with 3 difficulty levels.
 
-author: Prathmesh Pradip Kokate
+author: Prathmesh010190
+version: "1.0.0"
 tags:
   - openenv
   - project-management
   - planning
-  - real-world-task
-  - agent-evaluation
+  - scheduling
 
-interface:
-  reset: "POST /reset"
-  step: "POST /step"
-  state: "GET /state"
-
-tasks:
-  - name: "Task Breakdown"
-    type: "easy"
-    description: "Break project into individual tasks"
-  - name: "Plan and Assign"
-    type: "medium"
-    description: "Break down, assign team members, estimate effort"
-  - name: "Complete Sprint Plan"
-    type: "hard"
-    description: "Full plan with dependencies, risks, and summary"
+server:
+  entrypoint: "python -m uvicorn server.app:app --host 0.0.0.0 --port 8000"
+  port: 8000
 
 endpoints:
-  health: "GET /health"
-  tasks: "GET /tasks"
-  grader: "POST /grader"
-  baseline: "POST /baseline"
-  projects: "GET /projects"
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  tasks: GET /tasks
+  grader: GET /grader
+  baseline: POST /baseline
+  health: GET /health
+
+tasks:
+  - id: easy
+    name: Simple Web App Project Planning
+    difficulty: easy
+    description: Plan a portfolio website with 2 team members and 14-day deadline
+  - id: medium
+    name: E-Commerce MVP Planning
+    difficulty: medium
+    description: Plan an e-commerce platform with 4 team members and 30-day deadline
+  - id: hard
+    name: Real-Time SaaS Platform Planning
+    difficulty: hard
+    description: Plan a collaborative SaaS with 6 team members and 45-day deadline
+
+action_space:
+  type: object
+  properties:
+    tasks:
+      type: array
+      items:
+        type: object
+        properties:
+          name: {type: string}
+          assignee: {type: string}
+          estimated_days: {type: integer, min: 1, max: 30}
+          priority: {type: integer, min: 1, max: 5}
+          depends_on: {type: array, items: {type: string}}
+          category: {type: string, enum: [backend, frontend, design, testing, devops, research]}
+    risks:
+      type: array
+      items: {type: string}
+    sprint_summary:
+      type: string
+
+observation_space:
+  type: object
+  properties:
+    project_brief: {type: object}
+    difficulty: {type: string}
+    step_count: {type: integer}
+    max_steps: {type: integer}
+    done: {type: boolean}
+    feedback: {type: string}
+
+reward_range: [0.0, 1.0]
+
+baseline:
+  script: baseline/inference.py
+  expected_scores:
+    easy: 0.59
+    medium: 0.50
+    hard: 0.40

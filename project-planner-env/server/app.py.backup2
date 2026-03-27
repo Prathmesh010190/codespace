@@ -244,57 +244,42 @@ async def run_grader(request: GraderRequest):
 
 @app.post("/baseline")
 async def run_baseline():
-    """Run baseline inference using hardcoded plans on all 3 difficulties."""
-    global env
-    if env is None:
-        raise HTTPException(status_code=500, detail="Environment not initialized")
+    """
+    Run baseline inference using OpenAI API.
+    Triggers the baseline script and returns scores for all 3 tasks.
     
-    import sys as _sys
-    import os as _os
-    _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
-    from baseline.inference import get_plan_for_difficulty
-    from models import PlannerAction, TaskItem
+    Requires OPENAI_API_KEY environment variable.
     
-    results = {}
-    for difficulty in ["easy", "medium", "hard"]:
-        try:
-            env.reset(task_type=difficulty)
-            plan_data = get_plan_for_difficulty(difficulty)
-            action = plan_data.get("action", plan_data)
-            task_items = []
-            for t in action["tasks"]:
-                task_items.append(TaskItem(
-                    name=t["name"],
-                    assignee=t.get("assignee", "Alice"),
-                    estimated_days=t.get("estimated_days", 2),
-                    priority=t.get("priority", 2),
-                    depends_on=t.get("depends_on", []),
-                    category=t.get("category", "backend")
-                ))
-            planner_action = PlannerAction(
-                tasks=task_items,
-                risks=action.get("risks", ["Unknown risk"]),
-                sprint_summary=action.get("sprint_summary", "Sprint plan")
-            )
-            step_result = env.step(planner_action)
-            if hasattr(step_result, "score"):
-                score = float(step_result.score)
-            elif hasattr(step_result, "reward"):
-                score = float(step_result.reward)
-            elif isinstance(step_result, dict):
-                score = float(step_result.get("reward", step_result.get("score", 0.0)))
-            else:
-                score = 0.0
-            results[difficulty] = {"score": round(score, 4), "difficulty": difficulty}
-        except Exception as e:
-            results[difficulty] = {"score": 0.0, "difficulty": difficulty, "error": str(e)}
-    
-    avg_score = sum(r.get("score", 0.0) for r in results.values()) / 3
-    return {
-        "status": "completed",
-        "baseline_scores": results,
-        "average_score": round(avg_score, 4)
-    }
+    Returns:
+        Baseline scores for easy, medium, and hard tasks.
+    """
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise HTTPException(
+            status_code=400,
+            detail="OPENAI_API_KEY environment variable not set. "
+                   "Set it in Space Settings → Variables."
+        )
+
+    try:
+        # Import and run baseline
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from baseline.inference import run_baseline_all_tasks
+
+        results = run_baseline_all_tasks(env, api_key)
+        return {
+            "status": "completed",
+            "scores": results,
+        }
+    except ImportError:
+        # If baseline module not available, return manual instructions
+        return {
+            "status": "manual",
+            "message": "Run baseline/inference.py separately with OPENAI_API_KEY set.",
+            "command": "OPENAI_API_KEY=your_key python baseline/inference.py",
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Baseline failed: {str(e)}")
 
 
 @app.get("/projects")
@@ -386,9 +371,61 @@ async def get_grader():
 # ============================================================
 #  POST /baseline — Run inference on all 3 difficulties
 # ============================================================
-# ================================================================
+@app.post("/baseline")
+async def run_baseline():
+    """Run baseline inference on all 3 task difficulties and return scores."""
+    global env
+    if env is None:
+        raise HTTPException(status_code=500, detail="Environment not initialized")
+
+    results = {}
+    for difficulty in ["easy", "medium", "hard"]:
+        try:
+            # Reset environment for this difficulty
+            env.reset(task_type=difficulty)
+
+            # Get the hardcoded plan for this difficulty
+            from baseline.inference import get_plan_for_difficulty
+            plan = get_plan_for_difficulty(difficulty)
+
+            # Step with the plan
+            step_result = env.step(plan)
+
+            # Extract score
+            if hasattr(step_result, 'score'):
+                score = step_result.score
+            elif isinstance(step_result, dict):
+                score = step_result.get('reward', step_result.get('score', 0.0))
+            else:
+                score = 0.0
+
+            # Get grader result
+            if hasattr(env, 'last_grader_result') and env.last_grader_result is not None:
+                gr = env.last_grader_result
+                if hasattr(gr, 'dict'):
+                    results[difficulty] = gr.dict()
+                elif isinstance(gr, dict):
+                    results[difficulty] = gr
+                else:
+                    results[difficulty] = {"score": float(score), "difficulty": difficulty}
+            else:
+                results[difficulty] = {"score": float(score), "difficulty": difficulty}
+
+        except Exception as e:
+            results[difficulty] = {"score": 0.0, "difficulty": difficulty, "error": str(e)}
+
+    avg_score = sum(r.get("score", 0.0) for r in results.values()) / 3
+
+    return {
+        "baseline_scores": results,
+        "average_score": round(avg_score, 4),
+        "status": "completed"
+    }
+
+# ══════════════════════════════════════════════════════
 #  MAIN (for local development)
-# ================================================================
+# ══════════════════════════════════════════════════════
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
@@ -403,3 +440,103 @@ if __name__ == "__main__":
         workers=workers,
         reload=True,
     )
+
+# ============================================================
+# ENDPOINT: GET /tasks — Returns available tasks and action schema
+# ============================================================
+@app.get("/tasks")
+async def get_tasks():
+    """Return available task difficulties and the expected action schema."""
+    return {
+        "available_tasks": [
+            {
+                "task_id": "easy",
+                "name": "Simple Web App Project Planning",
+                "description": "Plan a small portfolio website with 2 team members",
+                "difficulty": "easy",
+                "team_size": 2,
+                "deadline_days": 14
+            },
+            {
+                "task_id": "medium", 
+                "name": "E-Commerce MVP Planning",
+                "description": "Plan an e-commerce platform with 4 team members",
+                "difficulty": "medium",
+                "team_size": 4,
+                "deadline_days": 30
+            },
+            {
+                "task_id": "hard",
+                "name": "Real-Time SaaS Platform Planning", 
+                "description": "Plan a collaborative project management SaaS with 6 team members",
+                "difficulty": "hard",
+                "team_size": 6,
+                "deadline_days": 45
+            }
+        ],
+        "action_schema": {
+            "action": {
+                "tasks": [
+                    {
+                        "name": "string - descriptive task name",
+                        "assignee": "string - team member name",
+                        "estimated_days": "int (1-30)",
+                        "priority": "int (1=highest to 5=lowest)",
+                        "depends_on": ["list of task name strings"],
+                        "category": "string - backend|frontend|design|testing|devops|research"
+                    }
+                ],
+                "risks": ["list of risk description strings"],
+                "sprint_summary": "string - brief summary of the sprint plan"
+            }
+        },
+        "categories": ["backend", "frontend", "design", "testing", "devops", "research"]
+    }
+
+
+# ============================================================
+# ENDPOINT: GET /grader — Returns last grader score
+# ============================================================
+@app.get("/grader")
+async def get_grader():
+    """Return the grading result from the most recent completed episode."""
+    global env
+    if env is None:
+        raise HTTPException(status_code=500, detail="Environment not initialized")
+    
+    # Check if environment has a last grader result
+    if hasattr(env, 'last_grader_result') and env.last_grader_result is not None:
+        return env.last_grader_result
+    
+    return {
+        "error": "No completed episode yet. Call POST /reset then POST /step first.",
+        "score": None,
+        "difficulty": None,
+        "breakdown": None
+    }
+
+
+# ============================================================
+# ENDPOINT: POST /baseline — Run inference on all 3 difficulties
+# ============================================================
+@app.post("/baseline")
+async def run_baseline():
+    """Run baseline inference on all 3 task difficulties and return scores."""
+    global env
+    if env is None:
+        raise HTTPException(status_code=500, detail="Environment not initialized")
+    
+    from baseline.inference import run_all_baselines
+    
+    try:
+        results = run_all_baselines()
+        return {
+            "baseline_scores": results,
+            "average_score": round(
+                sum(r["score"] for r in results.values()) / len(results), 4
+            ),
+            "status": "completed"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Baseline failed: {str(e)}")
+

@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
-# Add parent directory to path so we can import models
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -25,13 +24,11 @@ from server.environment import ProjectPlannerEnvironment
 #  APP SETUP
 # ══════════════════════════════════════════════════════
 
-# Global environment instance
 env: Optional[ProjectPlannerEnvironment] = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize environment when server starts."""
     global env
     print("🚀 Starting ProjectPlannerEnv server...")
     env = ProjectPlannerEnvironment()
@@ -46,16 +43,12 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="ProjectPlannerEnv",
     description=(
-        "An OpenEnv environment where AI agents act as Project Managers. "
-        "Agents receive project briefs and create sprint plans, which are "
-        "graded on task coverage, skill-assignment match, availability "
-        "compliance, dependency correctness, and risk identification."
+        "An OpenEnv environment where AI agents act as Project Managers."
     ),
     version="1.0.0",
     lifespan=lifespan,
 )
 
-# Allow CORS for cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -70,25 +63,21 @@ app.add_middleware(
 # ══════════════════════════════════════════════════════
 
 class ResetRequest(BaseModel):
-    """Request body for /reset endpoint."""
     task_type: str = "easy"
     project_id: Optional[str] = None
 
 
 class StepRequest(BaseModel):
-    """Request body for /step endpoint."""
     action: PlannerAction
 
 
 class GraderRequest(BaseModel):
-    """Request body for /grader endpoint."""
     task_type: str = "easy"
     project_id: str = "proj_001"
     action: PlannerAction
 
 
 class HealthResponse(BaseModel):
-    """Response for /health endpoint."""
     status: str = "healthy"
     environment: str = "ProjectPlannerEnv"
     version: str = "1.0.0"
@@ -98,37 +87,32 @@ class HealthResponse(BaseModel):
 #  ENDPOINTS
 # ══════════════════════════════════════════════════════
 
+@app.get("/")
+async def root():
+    """Root endpoint - required for HF Spaces."""
+    return {
+        "status": "running",
+        "environment": "ProjectPlannerEnv",
+        "version": "1.0.0",
+        "endpoints": [
+            "/health", "/reset", "/step", "/state",
+            "/tasks", "/projects", "/grader", "/baseline"
+        ]
+    }
+
+
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
-    """
-    Health check endpoint.
-    Returns 200 if the server is running.
-    Required for HF Space deployment validation.
-    """
     return HealthResponse()
 
 
 @app.post("/reset", response_model=StepResult)
 async def reset(request: ResetRequest):
-    """
-    Start a new episode.
-    
-    Args:
-        task_type: "easy", "medium", or "hard"
-        project_id: Optional specific project ID
-    
-    Returns:
-        StepResult with initial observation
-    """
     global env
     if env is None:
         raise HTTPException(status_code=500, detail="Environment not initialized")
-
     try:
-        result = env.reset(
-            task_type=request.task_type,
-            project_id=request.project_id,
-        )
+        result = env.reset(task_type=request.task_type, project_id=request.project_id)
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -138,19 +122,9 @@ async def reset(request: ResetRequest):
 
 @app.post("/step", response_model=StepResult)
 async def step(request: StepRequest):
-    """
-    Submit an action (project plan) and get graded.
-    
-    Args:
-        action: PlannerAction with tasks, risks, sprint_summary
-    
-    Returns:
-        StepResult with reward, feedback, and grading breakdown
-    """
     global env
     if env is None:
         raise HTTPException(status_code=500, detail="Environment not initialized")
-
     try:
         result = env.step(request.action)
         return result
@@ -160,155 +134,12 @@ async def step(request: StepRequest):
 
 @app.get("/state", response_model=PlannerState)
 async def get_state():
-    """
-    Get current episode metadata.
-    
-    Returns:
-        PlannerState with episode_id, step_count, task type, etc.
-    """
     global env
     if env is None:
         raise HTTPException(status_code=500, detail="Environment not initialized")
-
     return env.state()
 
 
-@app.get("/tasks")
-async def get_tasks():
-    """
-    List all available tasks with descriptions and scoring criteria.
-    
-    Returns:
-        List of task definitions with required fields and scoring info.
-    """
-    global env
-    if env is None:
-        raise HTTPException(status_code=500, detail="Environment not initialized")
-
-    return {
-        "tasks": env.get_available_tasks(),
-        "action_schema": {
-            "tasks": {
-                "type": "list",
-                "items": {
-                    "name": "string (required)",
-                    "assignee": "string (required for medium/hard)",
-                    "estimated_days": "float (required for medium/hard)",
-                    "priority": "integer (required for hard)",
-                    "depends_on": "list[string] (required for hard)",
-                    "category": "string: backend/frontend/testing/design/devops",
-                }
-            },
-            "risks": "list[string] (required for hard)",
-            "sprint_summary": "string (required for hard)",
-        }
-    }
-
-
-@app.post("/grader")
-async def run_grader(request: GraderRequest):
-    """
-    Run grader independently on a plan.
-    
-    Useful for testing grading logic without running a full episode.
-    
-    Args:
-        task_type: Difficulty level
-        project_id: Which project to grade against
-        action: The plan to grade
-    
-    Returns:
-        GraderResult with score, breakdown, and feedback
-    """
-    global env
-    if env is None:
-        raise HTTPException(status_code=500, detail="Environment not initialized")
-
-    try:
-        # Reset to the specified project (sets up ground truth)
-        env.reset(task_type=request.task_type, project_id=request.project_id)
-        # Grade the action
-        result = env.step(request.action)
-        return {
-            "score": result.reward,
-            "breakdown": result.info.get("grader_breakdown", {}),
-            "feedback": result.info.get("grader_feedback", ""),
-            "penalties": result.info.get("penalties", []),
-            "bonuses": result.info.get("bonuses", []),
-        }
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Grading failed: {str(e)}")
-
-
-@app.post("/baseline")
-async def run_baseline():
-    """Run baseline inference using hardcoded plans on all 3 difficulties."""
-    global env
-    if env is None:
-        raise HTTPException(status_code=500, detail="Environment not initialized")
-    
-    import sys as _sys
-    import os as _os
-    _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
-    from baseline.inference import get_plan_for_difficulty
-    from models import PlannerAction, TaskItem
-    
-    results = {}
-    for difficulty in ["easy", "medium", "hard"]:
-        try:
-            env.reset(task_type=difficulty)
-            plan_data = get_plan_for_difficulty(difficulty)
-            action = plan_data.get("action", plan_data)
-            task_items = []
-            for t in action["tasks"]:
-                task_items.append(TaskItem(
-                    name=t["name"],
-                    assignee=t.get("assignee", "Alice"),
-                    estimated_days=t.get("estimated_days", 2),
-                    priority=t.get("priority", 2),
-                    depends_on=t.get("depends_on", []),
-                    category=t.get("category", "backend")
-                ))
-            planner_action = PlannerAction(
-                tasks=task_items,
-                risks=action.get("risks", ["Unknown risk"]),
-                sprint_summary=action.get("sprint_summary", "Sprint plan")
-            )
-            step_result = env.step(planner_action)
-            if hasattr(step_result, "score"):
-                score = float(step_result.score)
-            elif hasattr(step_result, "reward"):
-                score = float(step_result.reward)
-            elif isinstance(step_result, dict):
-                score = float(step_result.get("reward", step_result.get("score", 0.0)))
-            else:
-                score = 0.0
-            results[difficulty] = {"score": round(score, 4), "difficulty": difficulty}
-        except Exception as e:
-            results[difficulty] = {"score": 0.0, "difficulty": difficulty, "error": str(e)}
-    
-    avg_score = sum(r.get("score", 0.0) for r in results.values()) / 3
-    return {
-        "status": "completed",
-        "baseline_scores": results,
-        "average_score": round(avg_score, 4)
-    }
-
-
-@app.get("/projects")
-async def list_projects():
-    """List all available project scenarios."""
-    global env
-    if env is None:
-        raise HTTPException(status_code=500, detail="Environment not initialized")
-
-    return {"projects": env.get_project_list()}
-
-# ============================================================
-#  GET /tasks — Available tasks and action schema
-# ============================================================
 @app.get("/tasks")
 async def get_tasks():
     """Return available task difficulties and the expected action schema."""
@@ -340,66 +171,109 @@ async def get_tasks():
             }
         ],
         "action_schema": {
-            "action": {
-                "tasks": [
-                    {
-                        "name": "string - descriptive task name",
-                        "assignee": "string - team member name",
-                        "estimated_days": "int (1-30)",
-                        "priority": "int (1=highest to 5=lowest)",
-                        "depends_on": ["list of task name strings"],
-                        "category": "string - backend|frontend|design|testing|devops|research"
-                    }
-                ],
-                "risks": ["list of risk description strings"],
-                "sprint_summary": "string - brief summary of the sprint plan"
-            }
+            "tasks": [
+                {
+                    "name": "string",
+                    "assignee": "string",
+                    "estimated_days": "int (1-30)",
+                    "priority": "int (1-5)",
+                    "depends_on": ["list of task names"],
+                    "category": "backend|frontend|design|testing|devops|research"
+                }
+            ],
+            "risks": ["list of risk strings"],
+            "sprint_summary": "string"
         },
         "categories": ["backend", "frontend", "design", "testing", "devops", "research"]
     }
 
 
-# ============================================================
-#  GET /grader — Returns last grader score
-# ============================================================
-@app.get("/grader")
-async def get_grader():
-    """Return the grading result from the most recent completed episode."""
+@app.post("/grader")
+async def run_grader(request: GraderRequest):
     global env
     if env is None:
         raise HTTPException(status_code=500, detail="Environment not initialized")
+    try:
+        env.reset(task_type=request.task_type, project_id=request.project_id)
+        result = env.step(request.action)
+        return {
+            "score": result.reward,
+            "breakdown": result.info.get("grader_breakdown", {}),
+            "feedback": result.info.get("grader_feedback", ""),
+            "penalties": result.info.get("penalties", []),
+            "bonuses": result.info.get("bonuses", []),
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Grading failed: {str(e)}")
 
+
+@app.get("/grader")
+async def get_grader():
+    global env
+    if env is None:
+        raise HTTPException(status_code=500, detail="Environment not initialized")
     if hasattr(env, 'last_grader_result') and env.last_grader_result is not None:
         result = env.last_grader_result
         if hasattr(result, 'dict'):
             return result.dict()
         return result
-
-    return {
-        "error": "No completed episode yet. Call POST /reset then POST /step first.",
-        "score": None,
-        "difficulty": None,
-        "breakdown": None
-    }
+    return {"error": "No completed episode yet.", "score": None}
 
 
-# ============================================================
-#  POST /baseline — Run inference on all 3 difficulties
-# ============================================================
-# ================================================================
-#  MAIN (for local development)
-# ================================================================
+@app.post("/baseline")
+async def run_baseline():
+    global env
+    if env is None:
+        raise HTTPException(status_code=500, detail="Environment not initialized")
+
+    from baseline.inference import get_plan_for_difficulty
+    from models import PlannerAction, TaskItem
+
+    results = {}
+    for difficulty in ["easy", "medium", "hard"]:
+        try:
+            env.reset(task_type=difficulty)
+            plan_data = get_plan_for_difficulty(difficulty)
+            action = plan_data.get("action", plan_data)
+            task_items = [
+                TaskItem(
+                    name=t["name"],
+                    assignee=t.get("assignee", "Alice"),
+                    estimated_days=t.get("estimated_days", 2),
+                    priority=t.get("priority", 2),
+                    depends_on=t.get("depends_on", []),
+                    category=t.get("category", "backend")
+                ) for t in action["tasks"]
+            ]
+            planner_action = PlannerAction(
+                tasks=task_items,
+                risks=action.get("risks", ["Unknown risk"]),
+                sprint_summary=action.get("sprint_summary", "Sprint plan")
+            )
+            step_result = env.step(planner_action)
+            score = float(getattr(step_result, 'reward', getattr(step_result, 'score', 0.0)))
+            results[difficulty] = {"score": round(score, 4), "difficulty": difficulty}
+        except Exception as e:
+            results[difficulty] = {"score": 0.0, "difficulty": difficulty, "error": str(e)}
+
+    avg_score = sum(r.get("score", 0.0) for r in results.values()) / 3
+    return {"status": "completed", "baseline_scores": results, "average_score": round(avg_score, 4)}
+
+
+@app.get("/projects")
+async def list_projects():
+    global env
+    if env is None:
+        raise HTTPException(status_code=500, detail="Environment not initialized")
+    return {"projects": env.get_project_list()}
+
+
+# ══════════════════════════════════════════════════════
+#  MAIN
+# ══════════════════════════════════════════════════════
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    host = os.environ.get("HOST", "0.0.0.0")
-    workers = int(os.environ.get("WORKERS", 1))
-
-    print(f"🚀 Starting server on {host}:{port}")
-    uvicorn.run(
-        "server.app:app",
-        host=host,
-        port=port,
-        workers=workers,
-        reload=True,
-    )
+    port = int(os.environ.get("PORT", 7860))
+    uvicorn.run("server.app:app", host="0.0.0.0", port=port, workers=1, reload=True)
